@@ -1,0 +1,3 @@
+import wallpaste
+
+wallpaste.run()
