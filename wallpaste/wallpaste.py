@@ -7,16 +7,6 @@ from PyQt5.QtWidgets import QApplication,QWidget, QDesktopWidget, QMainWindow, Q
 from PyQt5.QtGui import QIcon
 
 
-def run():
-    app = Wallpaste(sys.argv)
-    mw = WallpasteMainWindow()
-    desk_widget = WallpasteDesktopWidget()
-
-    print(desk_widget.get_screen_resolutions())
-
-    sys.exit(app.exec_())
-
-
 class Wallpaste(QApplication):
 
     def __init__(self, args):
@@ -35,43 +25,27 @@ class WallpasteDesktopWidget(QDesktopWidget):
 
 class WallpasteMainWindow(QMainWindow):
 
-    def __init__(self):
-        super().__init__()
-        self.resize(800, 550)
-        self.center()
-        self.setWindowTitle("wallpaste")
-        self._add_menubar()
-        self._add_fileselector()
-        self.setCentralWidget(QWidget())
-        self.centralWidget().show()
-        self.show()
-
-    # http://zetcode.com/gui/pyqt5/firstprograms/
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def _add_menubar(self):
-        self.mb = self.menuBar()
-        self.mb.addMenu("test")
-
-    def _add_fileselector(self):
-        QFileDialog(self.centralWidget())
-
-
-class TestImport(QMainWindow):
-
     def __init__(self, path):
         super().__init__()
-        uic.loadUi(os.path.join(path,'wallpaste.ui'), self)
+        uic.loadUi(os.path.join(path, 'wallpaste.ui'), self)
+        self._add_file_dialog()
         self.show()
+
+    def _select_file(self):
+        fname, _ = QFileDialog.getOpenFileName(directory="/home", filter="Images (*.png *.xpm *.jpg)")
+        self.file_edit.setText(fname)
+
+    def _add_file_dialog(self):
+        self.file_browse_button.clicked.connect(self._select_file)
 
 if __name__ == "__main__":
     # get the directory of this script
     path = os.path.dirname(os.path.abspath(__file__))
 
     app = Wallpaste(sys.argv)
-    win = TestImport(path)
+    win = WallpasteMainWindow(path)
+    desk_widget = WallpasteDesktopWidget()
+
+    print(desk_widget.get_screen_resolutions())
+
     sys.exit(app.exec_())
