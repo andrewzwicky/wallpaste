@@ -1,3 +1,4 @@
 syntax: glob
 wallpaste_venv/**
 .idea/**
+wallpaste/__pycache__/**
